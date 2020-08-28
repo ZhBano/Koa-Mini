@@ -1,7 +1,13 @@
 const http = require('http')
+const compose = require('./utils/compose')
 module.exports = class Zoa {
+  constructor() {
+    this.middleware = [] //储存中间件
+  }
+
   use(fn) {
-    this.fn = fn
+    if (typeof fn !== 'function') throw new TypeError('middleware must be a function!');
+    this.middleware.push(fn)
   }
 
 
@@ -11,11 +17,14 @@ module.exports = class Zoa {
   }
 
   callback() {
+    //处理中间件
+    const fn = compose(this.middleware)
+
     const handleRequest = (req, res) => {
       // 创建上下文
       const ctx = this.createContext(req, res)
       // 调用中间件
-      this.fn(ctx)
+      fn(ctx)
       // 输出内容
       res.end(ctx.body)
 
