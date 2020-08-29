@@ -73,7 +73,8 @@ module.exports = class Zoa {
 ## 中间件原理
 中间件是Koa最精髓的地方,下面著名的洋葱模型
 
-<img src="./koa.png" />
+<img src="https://camo.githubusercontent.com/71cc217310fae97f2d3ae244ef4a8ef4ae93b4ea/68747470733a2f2f73312e617831782e636f6d2f323032302f30362f30382f74574d69544a2e6a7067" />
+
 <br/>
 
 
