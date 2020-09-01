@@ -1,8 +1,15 @@
 const http = require('http')
 const compose = require('./utils/compose')
+const request =require('./request')
+const response =require('./response')
+const context =require('./context')
+
 module.exports = class Zoa {
   constructor() {
     this.middleware = [] //储存中间件
+    this.context=Object.create(context)
+    this.request=Object.create(request)
+    this.response=Object.create(response)
   }
 
   use(fn) {
@@ -24,10 +31,7 @@ module.exports = class Zoa {
       // 创建上下文
       const ctx = this.createContext(req, res)
       // 调用中间件
-      fn(ctx)
-      // 输出内容
-      res.end(ctx.body)
-
+      return this.handleRequest(ctx,fn)
     }
     return handleRequest
   }
@@ -35,16 +39,33 @@ module.exports = class Zoa {
 
   //创建上下文
   createContext(req, res) {
-    const ctx = {}
-    ctx.req = req
-    ctx.res = res
+    const ctx=Object.create(this.context)
+    ctx.request=Object.create(this.request)
+    ctx.response=Object.create(this.response)
+
+    ctx.req=ctx.request=req
+    ctx.res=ctx.response=res
+  
 
     return ctx
 
   }
 
 
-}
+  handleRequest(ctx,fn){
 
+    return fn(ctx).then(_=>this.respond(ctx)).catch(err=>{
+      ctx.res.end(err.toString())
+    })
+
+  }
+
+
+  respond(ctx){
+    let res=ctx.res;
+    let body=ctx.body;
+    return res.end(body)
+  }
+}
 
 

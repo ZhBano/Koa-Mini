@@ -53,7 +53,7 @@ class Delegator {
 
     // 包含 getter 与 setter 的功能
     access(name) {
-        return this.setter(name).getter(name)
+        return this.getter(name).setter(name)
     }
 
 
