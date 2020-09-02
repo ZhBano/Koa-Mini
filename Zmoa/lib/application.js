@@ -4,7 +4,7 @@ const request =require('./request')
 const response =require('./response')
 const context =require('./context')
 
-module.exports = class Zoa {
+module.exports = class Zmoa {
   constructor() {
     this.middleware = [] //储存中间件
     this.context=Object.create(context)

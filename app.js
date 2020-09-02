@@ -1,8 +1,8 @@
-const Zoa = require('./Zoa/lib/application')
-const Router = require('./Zoa/router')
+const Zmoa = require('./Zmoa/lib/application')
+const Router = require('./Zmoa/router')
 const router = new Router()
 
-let app = new Zoa()
+let app = new Zmoa()
 app.use((ctx, next) => {
   console.log('1 start')
   next()

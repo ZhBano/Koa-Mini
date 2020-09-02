@@ -1,6 +1,6 @@
 {
   "name": "zmoa",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "author": "<https://github.com/ZhBano>",
   "description": "通过阅读源码写的一个mini-koa，便于学习",
   "main": "./lib/application.js",
