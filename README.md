@@ -1,14 +1,18 @@
 ## 前言
 
-本文是我在阅读 Koa 源码以及参考别的文章后实现迷你版 Koa的过程 ，当你阅读源码后其实实现一个迷你版的 Koa 不会很难。
+本文是我在阅读 Koa 源码以及参考别的文章后实现迷你版 Koa的过程 ，当你阅读源码后其实实现一个迷你版的 Koa 不会很难，如果体验的可以`npm i zmoa`
 
 本文会循序渐进的解析内部原理，包括：
 
 1. 基础版本的 koa
 2. 中间件原理及实现
+3. context的实现
 
 ## 文件结构
-- `application.js`: 入口文件，里面包括我们常用的 use 方法、listen 方法以及对 ctx.body 做输出处理
+- `application.js`：入口文件，里面包括我们常用的 use 方法、listen 方法以及对 ctx.body 做输出处理
+- `context.js`：对`request`和`response`进一步封装，更容易获取值
+- `request.js`：对`req`返回的值进行拦截处理
+- `response.js`：对`res`返回的值进行拦截处理
 
 ## 基础版本
 用法：
@@ -231,6 +235,62 @@ let fn=compose([arr1,arr2,arr3])
 
 fn(ctx)
 
+```
+
+
+
+
+## Context
+`ctx`为我们扩展的很多好用的方法，当我们访问`ctx`时内部会劫持`request`和`response`内的属性进行返回，说到劫持就会想到`Object.defineProperty`,在`koa`内部使用的是`__defineGetter__`和`__defineSetter__`属性进行劫持从而实现代理，简单实现一个这个原理:
+```js
+let target = {
+    request: {
+       name:'xxx',
+        say: function () {
+            console.log("Hello");
+        },
+
+
+    }
+}
+
+/**
+ * @param {Object} proto 被代理对象
+ * @param {String} property 被代理对象上的被代理属性
+ * @param {String} name
+ */
+function delegates(proto, property, name){
+    proto.__defineGetter__(name, function () {
+        console.log(1111)
+        return proto[property][name];
+      });
+      proto.__defineSetter__(name, function (val) {
+        console.log(2222)
+        return (proto[property][name] = val);
+      });
+}
+
+console.log(target.name)  // xx
+target.name=111
+console.log(target.name) // 11
+
+```
+然后对其`request`和`response`使用`get`和`set`进行劫持处理，在`application.js`里面通过`Object.create`创建新对象存到原型链下通过一系列的赋值得到`ctx`,像这样:
+```js
+
+  createContext(req, res) {
+    const ctx=Object.create(this.context)
+    //this绑定的是 ctx.request
+    ctx.request=Object.create(this.request) 
+    ctx.response=Object.create(this.response)
+
+    //进行赋值
+    ctx.req=ctx.request.req=req
+    ctx.res=ctx.response.res=res
+
+    return ctx
+
+  }
 ```
 
 

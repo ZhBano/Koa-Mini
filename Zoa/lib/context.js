@@ -1,5 +1,5 @@
 
-const delegator = require('./utils/delegator')
+const delegator = require('../utils/delegator')
 
 const proto = module.exports = {
 
@@ -7,9 +7,11 @@ const proto = module.exports = {
 
 delegator(proto, 'request')
     .access('url')
-    .access('path')
+    .access('method')
    
 
 delegator(proto, 'response')
     .access('body')
+    .setter('headers')
+
 

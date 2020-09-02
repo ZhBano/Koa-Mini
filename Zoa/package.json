@@ -1,9 +1,9 @@
 {
   "name": "zmoa",
-  "version": "1.0.0",
-  "author": "https://github.com/ZhBano",
+  "version": "1.0.8",
+  "author": "<https://github.com/ZhBano>",
   "description": "通过阅读源码写的一个mini-koa，便于学习",
-  "main": "application.js",
+  "main": "./lib/application.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

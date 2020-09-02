@@ -5,6 +5,10 @@ module.exports = {
     },
     set body(val) {
       return this._body = val
+    },
+
+    set headers(val){
+      this.res.write(val)
     }
     
   }

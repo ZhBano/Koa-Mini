@@ -1,0 +1,11 @@
+{
+  "name": "zmoa-router",
+  "version": "1.0.1",
+  "description": "根据koa-router写的小型router",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "<https://github.com/ZhBano>",
+  "license": "ISC"
+}

@@ -15,6 +15,7 @@ function compose(arr) {
             try {
                 return Promise.resolve(fn(ctx, () => dispatch(i + 1)))
             } catch (error) {
+              
                 return Promise.reject(error)
             }
         }

@@ -1,5 +1,5 @@
 const http = require('http')
-const compose = require('./utils/compose')
+const compose = require('../utils/compose')
 const request =require('./request')
 const response =require('./response')
 const context =require('./context')
@@ -43,8 +43,8 @@ module.exports = class Zoa {
     ctx.request=Object.create(this.request)
     ctx.response=Object.create(this.response)
 
-    ctx.req=ctx.request=req
-    ctx.res=ctx.response=res
+    ctx.req=ctx.request.req=req
+    ctx.res=ctx.response.res=res
   
 
     return ctx
@@ -54,8 +54,9 @@ module.exports = class Zoa {
 
   handleRequest(ctx,fn){
 
-    return fn(ctx).then(_=>this.respond(ctx)).catch(err=>{
-      ctx.res.end(err.toString())
+    return fn(ctx).then(res=>this.respond(ctx)).catch(err=>{
+     
+      ctx.res.end(err)
     })
 
   }
@@ -64,6 +65,7 @@ module.exports = class Zoa {
   respond(ctx){
     let res=ctx.res;
     let body=ctx.body;
+    ctx.headers='<head><meta charset="utf-8"/></head>'
     return res.end(body)
   }
 }
