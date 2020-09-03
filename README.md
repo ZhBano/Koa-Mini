@@ -17,9 +17,9 @@
 ## 基础版本
 用法：
 ```js
-const Zoa =require('./Zoa/application')
+const Zmoa =require('./Zmoa/application')
 
-let app = new Zoa()
+let app = new Zmoa()
 
 // 引用中间件
 app.use(ctx => {
@@ -34,7 +34,7 @@ app.listen(3000, '127.0.0.1')
 
 ```js
 const http = require('http')
-module.exports = class Zoa {
+module.exports = class Zmoa {
   use(fn) {
     this.fn = fn
   }
@@ -291,6 +291,95 @@ console.log(target.name) // 11
     return ctx
 
   }
+```
+
+## 路由
+这个路由是通过参考其他文章+自己理解写的，只怪鄙人太菜了，源码只能看懂个大概，源码也是导出一个对象把各种方法存放到原型链，我们来看看路由的使用：
+```js
+const Router = require('zmoa-router')
+const router = new Router()
+
+router.get('/', (ctx, next) => {
+  ctx.body = "初始页"
+})
+
+
+router.get('/index', (ctx, next) => {
+  ctx.body = "首页"
+
+  next()
+
+
+})
+
+
+//初始路由
+app.use(router.routes())
+
+
+app.listen(3000, '127.0.0.1')
+```
+
+分析一下，引入`zmoa-router`模块，然后实例化，第一步初始化路由也是至关重要的一步，贴代码简易路由：
+```js
+
+class Router {
+    constructor() {
+        this.stack = [] //储存每个路由的方法对象
+    }
+
+    //注册路由
+    register(path, method, fn) {
+        let route={
+            path, 
+            method, 
+            fn
+        }
+
+        this.stack.push(route)
+    }
+
+    // get方法
+    get(path,fn){
+        this.register(path,'get',fn)
+    }
+
+    // post方法
+    post(path,fn){
+        this.register(path,'post',fn)
+    }
+
+
+    routes(){
+       
+      // app.use()接收的是一个函数储存到一个数组里面，然后调用中间件
+     
+        return async (ctx,next)=>{
+            let route=null;
+
+            for(let item of this.stack){
+
+                if(ctx.url===item.path && item.method.includes(ctx.method)){
+                    route=item.fn
+                    break
+                }
+            }
+
+            if(typeof route ==='function'){
+               
+                route(ctx,next)
+                return 
+            }else{
+                ctx.body='Not Found'
+            }
+  
+            await next()
+
+        }
+    }
+}
+
+   
 ```
 
 
